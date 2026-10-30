@@ -1,0 +1,22 @@
+# Secretos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Datos locales
+*.db
+*.db-journal
+*.sqlite*
+
+# Entornos y caches
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Herramientas locales
+.claude/
+.idea/
+.vscode/
