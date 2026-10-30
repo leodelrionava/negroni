@@ -23,7 +23,6 @@ def _system_blocks(tenant: Tenant) -> list[dict]:
     base = (
         f"{tenant.system_prompt}\n\n"
         f"--- Reglas operativas ---\n"
-        f"- Hoy es {now} (zona {tenant.timezone}).\n"
         f"- Responde SIEMPRE en el idioma del cliente; por defecto {tenant.language}.\n"
         f"- Sé breve y natural, como un mensaje de WhatsApp. Nada de respuestas largas.\n"
         f"- Nunca inventes precios, horarios o disponibilidad que no te hayan dado.\n"
@@ -31,7 +30,12 @@ def _system_blocks(tenant: Tenant) -> list[dict]:
         f"- Negocio: {tenant.name}."
     )
     # cache_control marca el prefijo cacheable (system prompt estable del tenant).
-    return [{"type": "text", "text": base, "cache_control": {"type": "ephemeral"}}]
+    # La hora va en un bloque aparte, despues del corte: si quedara dentro del
+    # prefijo, cambiaria cada minuto y el cache nunca se reutilizaria.
+    return [
+        {"type": "text", "text": base, "cache_control": {"type": "ephemeral"}},
+        {"type": "text", "text": f"Hoy es {now} (zona {tenant.timezone})."},
+    ]
 
 
 def reply(tenant: Tenant, customer: str, customer_name: str, user_text: str) -> str:
